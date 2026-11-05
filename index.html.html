@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AquaDrills · Ejercicios de natación</title>
+<style>
+:root{--bg:#f3f8fb;--card:#fff;--tx:#0e2a3a;--mu:#5b7585;--ac:#0a7ea4;--ac2:#e6f4fa;--bd:#d5e4ec;--rd:#d6455d;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1a24;--card:#12293a;--tx:#e6f2f8;--mu:#8fb0c2;--ac:#3cc0ea;--ac2:#10394d;--bd:#244457;--rd:#ff7088}}
+:root[data-theme="dark"]{--bg:#0a1a24;--card:#12293a;--tx:#e6f2f8;--mu:#8fb0c2;--ac:#3cc0ea;--ac2:#10394d;--bd:#244457;--rd:#ff7088}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:linear-gradient(135deg,#065a7a,#0a9bc4);color:#fff;padding:18px 16px 22px}
+.wrap{max-width:980px;margin:0 auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{margin:0;font-size:1.4rem}
+button,select,input{font:inherit;color:inherit}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:8px 14px;cursor:pointer}
+.btn.ghost{background:rgba(255,255,255,.18)}
+.btn.line{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+#q{width:100%;margin-top:14px;padding:13px 16px;border-radius:12px;border:0;font-size:1.05rem;background:#fff;color:#0e2a3a}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.chip{background:rgba(255,255,255,.2);color:#fff;border:0;border-radius:99px;padding:5px 12px;cursor:pointer;font-size:.9rem}
+.filters{padding:14px 16px;background:var(--card);border-bottom:1px solid var(--bd)}
+.filters label{font-size:.88rem;color:var(--mu)}
+.filters select{background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:6px}
+.mats{display:flex;gap:6px;flex-wrap:wrap}
+.mats label{display:flex;gap:4px;align-items:center;background:var(--ac2);color:var(--tx);padding:3px 10px;border-radius:99px;cursor:pointer}
+main{padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;overflow:hidden;cursor:pointer}
+.thumb{height:110px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,var(--ac2),var(--bd));position:relative}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.cb{padding:12px}
+.cb h3{margin:0 0 4px;font-size:1.02rem}
+.tag{display:inline-block;font-size:.75rem;background:var(--ac2);color:var(--ac);border-radius:6px;padding:1px 7px;margin:2px 3px 0 0}
+.fav{position:absolute;top:8px;right:8px;background:var(--card);border:0;border-radius:50%;width:36px;height:36px;font-size:1.1rem;cursor:pointer;color:var(--mu)}
+.fav.on{color:var(--rd)}
+.empty{text-align:center;color:var(--mu);padding:40px 0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-start;justify-content:center;padding:20px 12px;overflow:auto;z-index:20}
+.modal.open{display:flex}
+.box{background:var(--card);border-radius:16px;max-width:640px;width:100%;padding:20px;position:relative}
+.x{position:absolute;top:10px;right:12px;background:none;border:0;font-size:1.5rem;cursor:pointer;color:var(--mu);z-index:2}
+.box h2{margin:0 0 6px}
+.box h4{margin:16px 0 4px;color:var(--ac)}
+.box ol{margin:0;padding-left:20px}
+.prog{border-left:4px solid #2fa36b;padding-left:10px}.reg{border-left:4px solid #e0933a;padding-left:10px}
+.box input{width:100%;padding:10px;margin:6px 0;border-radius:8px;border:1px solid var(--bd);background:var(--bg)}
+.msg{color:var(--rd);font-size:.9rem;min-height:1.2em}
+.note{font-size:.8rem;color:var(--mu)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+ <div class="top"><h1>🏊 AquaDrills</h1>
+  <div><button class="btn ghost" id="favBtn">♥ Mis favoritos</button> <button class="btn ghost" id="userBtn">Entrar</button></div></div>
+ <input id="q" type="search" placeholder="Busca una capacidad: salto de cabeza, virajes, respiración, brazada, patada…">
+ <div class="chips" id="chips"></div>
+</div></header>
+<div class="filters"><div class="wrap" style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+ <label>Edad <select id="age"><option value="">Todas</option><option>6-9</option><option>10-13</option><option>14+</option></select></label>
+ <label>Nivel <select id="lvl"><option value="">Todos</option><option>Iniciación</option><option>Intermedio</option><option>Avanzado</option></select></label>
+ <div class="mats" id="mats"></div>
+</div></div>
+<main><div class="wrap"><p class="note" id="count"></p><div class="grid" id="grid"></div></div></main>
+
+<div class="modal" id="dm"><div class="box" id="db"></div></div>
+<div class="modal" id="am"><div class="box">
+ <button class="x" onclick="closeM('am')">×</button>
+ <h2 id="at">Acceder</h2>
+ <input id="eu" placeholder="Correo electrónico" type="email" autocomplete="username">
+ <input id="ep" placeholder="Contraseña (mín. 6 caracteres)" type="password" autocomplete="current-password">
+ <div class="msg" id="am-msg"></div>
+ <button class="btn" id="go">Entrar</button> <button class="btn line" id="sw">Crear cuenta</button>
+ <p class="note">Demo: las cuentas se guardan solo en este navegador. Para uso real, conecta un servidor (Firebase, Supabase…).</p>
+</div></div>
+
+<script>
+const EX=[
+{c:"Salto de cabeza",n:"Salida desde sentado en el borde",a:["6-9"],l:"Iniciación",m:["Ninguno"],i:"🤸",
+ s:["Siéntate en el borde con los pies apoyados en la pared.","Brazos estirados sobre la cabeza, barbilla pegada al pecho.","Inclínate hacia delante y déjate caer entrando con las manos primero.","Desliza en posición hidrodinámica unos segundos."],
+ p:"Hazlo de rodillas, luego en cuclillas y finalmente de pie.",r:"Entra en el agua con ayuda de un compañero o un monitor que sujete las manos."},
+{c:"Salto de cabeza",n:"Salida de pie con entrada por un aro",a:["10-13","14+"],l:"Intermedio",m:["Aros","Ninguno"],i:"🤸",
+ s:["Dedos de los pies agarrando el borde del poyete.","Flexiona rodillas y lanza los brazos hacia delante y arriba.","Extiende el cuerpo y entra por el aro flotante con toda la línea del cuerpo.","Termina con una patada de delfín y sal a la superficie."],
+ p:"Aleja el aro y añade una brazada completa tras la salida.",r:"Acerca el aro o hazlo desde sentado."},
+{c:"Virajes",n:"Viraje de volteo con pared a 2 m",a:["10-13","14+"],l:"Intermedio",m:["Ninguno"],i:"🔄",
+ s:["Nada hacia la pared con la mirada abajo.","A 2 m, mete la barbilla y haz la voltereta hacia delante.","Apoya los pies en la pared con las rodillas flexionadas.","Empuja en posición lateral y gira a boca abajo mientras deslizas."],
+ p:"Hazlo a velocidad máxima y encadena con patada de delfín submarina.",r:"Practica la voltereta sin pared y luego con una mano tocando la pared."},
+{c:"Virajes",n:"Viraje de toque y giro (iniciación)",a:["6-9","10-13"],l:"Iniciación",m:["Ninguno"],i:"🔄",
+ s:["Toca la pared con una mano.","Recoge las piernas y gira el cuerpo hacia el lado de la mano libre.","Apoya los pies, sumerge la cabeza y empuja con brazos estirados."],
+ p:"Hazlo sin parar el movimiento y con empuje más potente.",r:"Practica el giro estático agarrado al borde."},
+{c:"Respiración",n:"Respiración lateral con tabla",a:["6-9","10-13"],l:"Iniciación",m:["Tabla"],i:"💨",
+ s:["Agarra la tabla con un brazo estirado.","Patada continua; cara en el agua.","Gira la cabeza hacia un lado para inhalar con un ojo dentro del agua.","Exhala de forma continua por nariz y boca al volver al agua."],
+ p:"Alterna lados cada 3 patadas y luego quita la tabla.",r:"Practica soplando burbujas agarrado al borde de la piscina."},
+{c:"Respiración",n:"Respiración bilateral cada 3 brazadas",a:["10-13","14+"],l:"Avanzado",m:["Ninguno","Tubo frontal"],i:"💨",
+ s:["Nada crol con la cabeza alineada.","Inhala cada 3 brazadas, alternando lados.","Mantén el cuerpo estable; gira la cabeza sin exagerar el giro de hombros."],
+ p:"Cada 5 brazadas o series con apnea controlada.",r:"Respira cada 2 brazadas al lado preferido."},
+{c:"Brazada",n:"Crol con puños cerrados",a:["10-13","14+"],l:"Intermedio",m:["Ninguno"],i:"🙌",
+ s:["Nada crol con los puños cerrados.","Siente el antebrazo como una pala.","Tras unos largos, abre las manos y nota el agarre."],
+ p:"Alterna 25 m con puños / 25 m con manos abiertas.",r:"Hazlo con aletas cortas."},
+{c:"Brazada",n:"Crol con pull buoy y palas",a:["14+"],l:"Avanzado",m:["Pull buoy","Palas"],i:"🙌",
+ s:["Pull buoy entre los muslos.","Entrada de la mano alineada con el hombro.","Codo alto en la fase de agarre; empuja hasta el muslo."],
+ p:"Aumenta el tamaño de las palas y reduce el número de brazadas por largo.",r:"Quita las palas y trabaja solo con pull buoy."},
+{c:"Patada",n:"Patada lateral con aletas",a:["6-9","10-13","14+"],l:"Iniciación",m:["Aletas"],i:"🦶",
+ s:["Acostado de lado, brazo inferior estirado.","Patada continua desde la cadera con tobillos sueltos.","Cambia de lado cada 6 patadas."],
+ p:"Hazlo sin aletas y luego con tabla.",r:"Apóyate en el borde o usa tabla."},
+{c:"Patada",n:"Patada de delfín submarina",a:["10-13","14+"],l:"Avanzado",m:["Aletas","Ninguno"],i:"🐬",
+ s:["Posición hidrodinámica, brazos estirados.","Ondulación desde el pecho hasta las puntas de los pies.","Mantén 10-15 m y emerge con brazada."],
+ p:"Ejecuta en vertical y luego tras el viraje o la salida.",r:"Empieza con aletas y ondulación en superficie."},
+{c:"Posición del cuerpo",n:"Deslizamiento en flecha",a:["6-9","10-13"],l:"Iniciación",m:["Ninguno"],i:"🚀",
+ s:["Empuja desde la pared con los brazos estirados.","Cabeza entre los brazos, cuerpo recto.","Desliza sin patada hasta detenerte."],
+ p:"Añade patada pequeña y gira a posición lateral.",r:"Haz el deslizamiento agarrando una tabla."}
+];
+const MATS=["Tabla","Pull buoy","Aletas","Palas","Aros","Tubo frontal","Ninguno"];
+const CAPS=["Salto de cabeza","Virajes","Respiración","Brazada","Patada","Posición del cuerpo"];
+const $=id=>document.getElementById(id);
+let user=null,authMode='login',onlyFav=false;
+function ls(k,v){try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}}
+const users=()=>ls('ad_users')||{};
+const favs=()=>user?(ls('ad_fav_'+user)||[]):[];
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+$('chips').innerHTML=CAPS.map(c=>`<button class="chip" data-c="${c}">${c}</button>`).join('');
+$('mats').innerHTML=MATS.map(m=>`<label><input type="checkbox" value="${m}"> ${m}</label>`).join('');
+$('chips').onclick=e=>{if(e.target.dataset.c){$('q').value=e.target.dataset.c;render()}};
+document.querySelectorAll('.mats input').forEach(i=>i.onchange=render);
+['q','age','lvl'].forEach(id=>$(id).oninput=render);
+const tags=e=>`<span class="tag">${e.c}</span><span class="tag">${e.l}</span>${e.a.map(a=>`<span class="tag">${a} años</span>`).join('')}${e.m.map(m=>`<span class="tag">${m}</span>`).join('')}`;
+function render(){
+ const q=norm($('q').value),age=$('age').value,lvl=$('lvl').value;
+ const ms=[...document.querySelectorAll('.mats input:checked')].map(i=>i.value);
+ const f=favs();
+ const r=EX.map((e,i)=>({...e,id:i})).filter(e=>
+  (!q||norm(e.c+' '+e.n+' '+e.s.join(' ')).includes(q))&&(!age||e.a.includes(age))&&(!lvl||e.l===lvl)&&
+  (!ms.length||ms.some(m=>e.m.includes(m)))&&(!onlyFav||f.includes(e.id)));
+ $('count').textContent=(onlyFav?'Favoritos · ':'')+r.length+' ejercicio(s)';
+ $('grid').innerHTML=r.length?r.map(e=>`<div class="card" onclick="openD(${e.id})"><div class="thumb">${e.img?`<img src="${e.img}" alt="">`:e.i}<button class="fav ${f.includes(e.id)?'on':''}" onclick="event.stopPropagation();tog(${e.id})" aria-label="Favorito">♥</button></div><div class="cb"><h3>${e.n}</h3>${tags(e)}</div></div>`).join(''):'<div class="empty" style="grid-column:1/-1">No hay resultados. Prueba otros filtros.</div>';
+}
+function tog(id){
+ if(!user){setMode('login');openA();return}
+ let f=favs();f=f.includes(id)?f.filter(x=>x!==id):[...f,id];ls('ad_fav_'+user,f);render();if($('dm').classList.contains('open'))openD(id)
+}
+function openD(id){
+ const e=EX[id],on=favs().includes(id);
+ $('db').innerHTML=`<button class="x" onclick="closeM('dm')">×</button><div class="thumb" style="border-radius:12px;margin-bottom:10px">${e.img?`<img src="${e.img}" alt="">`:e.i}</div><h2>${e.n}</h2>${tags(e)}
+ <h4>Cómo ejecutarlo</h4><ol>${e.s.map(s=>`<li>${s}</li>`).join('')}</ol>
+ <h4>▲ Progresión</h4><div class="prog">${e.p}</div><h4>▼ Regresión</h4><div class="reg">${e.r}</div>
+ <p><a target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent('natación '+e.c+' '+e.n)}">▶ Ver vídeos de este ejercicio</a></p>
+ <button class="btn ${on?'line':''}" onclick="tog(${id})">${on?'♥ Quitar de favoritos':'♡ Guardar en favoritos'}</button>`;
+ $('dm').classList.add('open')
+}
+function closeM(id){$(id).classList.remove('open')}
+function openA(){$('am-msg').textContent='';$('am').classList.add('open')}
+function setMode(m){authMode=m;$('at').textContent=m==='login'?'Acceder':'Crear cuenta';$('go').textContent=m==='login'?'Entrar':'Registrarme';$('sw').textContent=m==='login'?'Crear cuenta':'Ya tengo cuenta'}
+$('sw').onclick=()=>setMode(authMode==='login'?'reg':'login');
+$('go').onclick=async()=>{
+ const u=$('eu').value.trim().toLowerCase(),p=$('ep').value,us=users();
+ if(!/^\S+@\S+\.\S+$/.test(u))return $('am-msg').textContent='Correo no válido.';
+ if(p.length<6)return $('am-msg').textContent='La contraseña necesita al menos 6 caracteres.';
+ const h=await hash(p+u);
+ if(authMode==='reg'){if(us[u])return $('am-msg').textContent='Ese correo ya existe.';us[u]=h;ls('ad_users',us)}
+ else if(us[u]!==h)return $('am-msg').textContent='Correo o contraseña incorrectos.';
+ user=u;ls('ad_session',u);$('ep').value='';closeM('am');upUser();render()
+};
+function upUser(){$('userBtn').textContent=user?'Salir ('+user.split('@')[0]+')':'Entrar'}
+$('userBtn').onclick=()=>{if(user){user=null;ls('ad_session',null);onlyFav=false;$('favBtn').textContent='♥ Mis favoritos';upUser();render()}else{setMode('login');openA()}};
+$('favBtn').onclick=()=>{if(!user){setMode('login');openA();return}onlyFav=!onlyFav;$('favBtn').textContent=onlyFav?'← Todos':'♥ Mis favoritos';render()};
+['dm','am'].forEach(id=>$(id).onclick=e=>{if(e.target.id===id)closeM(id)});
+user=ls('ad_session');upUser();render();
+</script>
+</body>
+</html>
